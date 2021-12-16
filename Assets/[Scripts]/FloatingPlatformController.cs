@@ -6,16 +6,25 @@
  *  Description      : Floating Platform Control Script use to setting the platform.
  *  Revision History : v0.1 Create the Shrinking and Resetting function to control shrinking for the platform .
  *                     v0.2 Create the Collision function to check the player
+ *                     v0.3 Added Sound Effect and Floating Effect function.
  */
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class FloatingPlatformController : MonoBehaviour
 {
     [Header("Platform setting")]
     public float size;
+    public float floatingRange;
+    public float speed;
+
+    [Header("Sound FX")]
+    public List<AudioSource> audioSources;
+    public AudioSource shrinkingSound;
+    public AudioSource resettingSound;
 
     public bool isPlayer;
     public GameObject floatingPlatform;
@@ -26,6 +35,11 @@ public class FloatingPlatformController : MonoBehaviour
     void Start()
     {
         startingPosition = gameObject.transform.position;
+
+        //Assign Sounds
+        audioSources = GetComponents<AudioSource>().ToList();
+        shrinkingSound = audioSources[0];
+        resettingSound = audioSources[1];
     }
 
     // Update is called once per frame
@@ -35,6 +49,7 @@ public class FloatingPlatformController : MonoBehaviour
 
         Resetting();
 
+        FloatingEffect();
     }
 
     //shrink the platform size
@@ -59,11 +74,20 @@ public class FloatingPlatformController : MonoBehaviour
         }
     }
 
+    // float the platform up and down
+    private void FloatingEffect()
+    {
+        float pingPongValue = Mathf.PingPong(Time.time * speed, floatingRange);
+
+        transform.position = new Vector2(transform.position.x, startingPosition.y + pingPongValue);
+    }
+
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
             isPlayer = true;
+            shrinkingSound.Play();
         }
     }
 
@@ -72,6 +96,7 @@ public class FloatingPlatformController : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             isPlayer = false;
+            resettingSound.Play();
         }
     }
 }
