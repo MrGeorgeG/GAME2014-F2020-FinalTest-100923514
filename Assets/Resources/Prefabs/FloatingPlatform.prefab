@@ -123,3 +123,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eff8f6860fa7314880820feeca7d250, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  size: 3
+  isPlayer: 0
+  floatingPlatform: {fileID: 61658680447773405}
